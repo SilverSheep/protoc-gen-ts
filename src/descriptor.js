@@ -42,7 +42,7 @@ function createToObject(rootDescriptor, messageDescriptor) {
     for (const fieldDescriptor of messageDescriptor.field) {
         let valueExpr = ts.factory.createPropertyAccessExpression(
             ts.factory.createThis(),
-            fieldDescriptor.name
+            convertSnakeCaseToCamelCase(fieldDescriptor.name)
         );
 
         if (field.isMap(fieldDescriptor)) {
@@ -154,7 +154,7 @@ function createToObject(rootDescriptor, messageDescriptor) {
         if (field.isOptional(rootDescriptor, fieldDescriptor)) {
             const propertyAccessor = ts.factory.createPropertyAccessExpression(
                 ts.factory.createThis(),
-                fieldDescriptor.name
+                convertSnakeCaseToCamelCase(fieldDescriptor.name)
             );
             let condition = ts.factory.createBinaryExpression(
                 propertyAccessor,
@@ -179,7 +179,7 @@ function createToObject(rootDescriptor, messageDescriptor) {
                     ts.factory.createBlock([
                         ts.factory.createExpressionStatement(
                             ts.factory.createBinaryExpression(
-                                ts.factory.createPropertyAccessExpression(dataIdentifier, fieldDescriptor.name),
+                                ts.factory.createPropertyAccessExpression(dataIdentifier, convertSnakeCaseToCamelCase(fieldDescriptor.name)),
                                 ts.factory.createToken(ts.SyntaxKind.EqualsToken),
                                 valueExpr
                             )
@@ -190,7 +190,7 @@ function createToObject(rootDescriptor, messageDescriptor) {
         } else {
             properties.push(
                 ts.factory.createPropertyAssignment(
-                    fieldDescriptor.name,
+                    convertSnakeCaseToCamelCase(fieldDescriptor.name),
                     valueExpr
                 )
             );
@@ -286,7 +286,7 @@ function createMessageSignature(rootDescriptor, messageDescriptor) {
                 }
                 members.push(ts.factory.createPropertySignature(
                     undefined,
-                    fieldDescriptor.name,
+                    convertSnakeCaseToCamelCase(fieldDescriptor.name),
                     ts.factory.createToken(ts.SyntaxKind.QuestionToken),
                     fieldType
                 ))
@@ -316,7 +316,7 @@ function createMessageSignature(rootDescriptor, messageDescriptor) {
         fieldSignatures.push(
             ts.factory.createPropertySignature(
                 undefined,
-                fieldDescriptor.name,
+                convertSnakeCaseToCamelCase(fieldDescriptor.name),
                 field.isOptional(rootDescriptor, fieldDescriptor) ? ts.factory.createToken(ts.SyntaxKind.QuestionToken) : undefined,
                 fieldType
             )
@@ -390,7 +390,7 @@ function createPrimitiveMessageSignature(rootDescriptor, messageDescriptor) {
         fieldSignatures.push(
             ts.factory.createPropertySignature(
                 undefined,
-                fieldDescriptor.name,
+                convertSnakeCaseToCamelCase(fieldDescriptor.name),
                 field.isOptional(rootDescriptor, fieldDescriptor) ? ts.factory.createToken(ts.SyntaxKind.QuestionToken) : undefined,
                 fieldType
             )
@@ -498,12 +498,12 @@ function createConstructor(
                             ts.factory.createBinaryExpression(
                                 ts.factory.createPropertyAccessExpression(
                                     ts.factory.createThis(),
-                                    fieldDescriptor.name
+                                    convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                 ),
                                 ts.SyntaxKind.EqualsToken,
                                 ts.factory.createPropertyAccessExpression(
                                     dataIdentifier,
-                                    fieldDescriptor.name
+                                    convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                 )
                             )
                         );
@@ -513,7 +513,7 @@ function createConstructor(
                         return ts.factory.createIfStatement(
                             ts.factory.createBinaryExpression(
                                 ts.factory.createBinaryExpression(
-                                    ts.factory.createStringLiteral(fieldDescriptor.name),
+                                    ts.factory.createStringLiteral(convertSnakeCaseToCamelCase(fieldDescriptor.name)),
                                     ts.factory.createToken(ts.SyntaxKind.InKeyword),
                                     dataIdentifier
                                 ),
@@ -522,7 +522,7 @@ function createConstructor(
                                 ts.factory.createBinaryExpression(
                                     ts.factory.createPropertyAccessExpression(
                                         dataIdentifier,
-                                        fieldDescriptor.name
+                                        convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                     ),
                                     ts.factory.createToken(ts.SyntaxKind.ExclamationEqualsToken),
                                     ts.factory.createIdentifier("undefined"),
@@ -539,7 +539,7 @@ function createConstructor(
         if (!field.isMap(fieldDescriptor)) {
             continue;
         }
-        let propertyAccessor = ts.factory.createPropertyAccessExpression(ts.factory.createThis(), fieldDescriptor.name);
+        let propertyAccessor = ts.factory.createPropertyAccessExpression(ts.factory.createThis(), convertSnakeCaseToCamelCase(fieldDescriptor.name));
         statements.push(
             ts.factory.createIfStatement(
                 ts.factory.createPrefixUnaryExpression(
@@ -602,7 +602,7 @@ function createGetter(
     return ts.factory.createGetAccessorDeclaration(
         undefined,
         undefined,
-        fieldDescriptor.name,
+        convertSnakeCaseToCamelCase(fieldDescriptor.name),
         undefined,
         undefined,
         ts.factory.createBlock([
@@ -794,7 +794,7 @@ function createSetter(
     return ts.factory.createSetAccessorDeclaration(
         undefined,
         undefined,
-        fieldDescriptor.name,
+        convertSnakeCaseToCamelCase(fieldDescriptor.name),
         [ts.factory.createParameterDeclaration(
             undefined,
             undefined,
@@ -923,7 +923,7 @@ function createSerialize(rootDescriptor, messageDescriptor, pbIdentifier) {
     for (const fieldDescriptor of messageDescriptor.field) {
         const propAccessor = ts.factory.createPropertyAccessExpression(
             ts.factory.createThis(),
-            fieldDescriptor.name
+            convertSnakeCaseToCamelCase(fieldDescriptor.name)
         );
 
         if (field.isMap(fieldDescriptor)) {
@@ -1070,7 +1070,7 @@ function createSerialize(rootDescriptor, messageDescriptor, pbIdentifier) {
                                 ts.factory.createPropertyAccessExpression(
                                     ts.factory.createPropertyAccessExpression(
                                         ts.factory.createThis(),
-                                        fieldDescriptor.name
+                                        convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                     ),
                                     "serialize"
                                 ),
@@ -1410,7 +1410,7 @@ function createDeserialize(
                                     [
                                         ts.factory.createPropertyAccessExpression(
                                             ts.factory.createIdentifier("message"),
-                                            fieldDescriptor.name
+                                            convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                         ),
                                         ts.factory.createIdentifier("reader"),
                                         keyCall,
@@ -1447,7 +1447,7 @@ function createDeserialize(
                         [
                             ts.factory.createPropertyAccessExpression(
                                 ts.factory.createIdentifier("message"),
-                                fieldDescriptor.name
+                                convertSnakeCaseToCamelCase(fieldDescriptor.name)
                             ),
                             ts.factory.createArrowFunction(
                                 undefined,
@@ -1477,7 +1477,7 @@ function createDeserialize(
                                     : ts.factory.createBinaryExpression(
                                         ts.factory.createPropertyAccessExpression(
                                             ts.factory.createIdentifier("message"),
-                                            fieldDescriptor.name
+                                            convertSnakeCaseToCamelCase(fieldDescriptor.name)
                                         ),
                                         ts.SyntaxKind.EqualsToken,
                                         readCall
@@ -1493,7 +1493,7 @@ function createDeserialize(
                     ts.factory.createBinaryExpression(
                         ts.factory.createPropertyAccessExpression(
                             ts.factory.createIdentifier("message"),
-                            fieldDescriptor.name
+                            convertSnakeCaseToCamelCase(fieldDescriptor.name)
                         ),
                         ts.SyntaxKind.EqualsToken,
                         ts.factory.createCallExpression(
@@ -1777,6 +1777,27 @@ function createMessage(
     );
 
 
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function convertSnakeCaseToCamelCase(
+    snakeCaseStr
+) {
+    let newTokens = [];
+    let tokens = snakeCaseStr.split('_');
+    if (tokens.size === 0) {
+        return '';
+    }
+    if (tokens.size === 1) {
+        return tokens[0];
+    }
+    newTokens.push(tokens[0]);
+    for (let i = 1; i < tokens.length; i++){
+        const token = tokens[i]; newTokens.push(capitalizeFirstLetter(token)) }
+    return newTokens.join('');
 }
 
 /**
